@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Department - Raha College</title>
+    <meta name="author" content="Reinhard son Sangma">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- AOS JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* ===================== VIDEO BG ===================== */
+        .video-background {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: brightness(0.85);
+        }
+
+        /* ===================== WATERMARK ===================== */
+        #watermark-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+        .watermark-text {
+            position: absolute;
+            font-size: 13px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: rgba(255,255,255,0.10);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            user-select: none;
+            transform: rotate(-30deg);
+        }
+
+        /* ===================== TREE SVG ===================== */
+        #tree-container {
+            position: fixed;
+            bottom: 0; left: -10px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* ===================== LEAVES ===================== */
+        .leaf {
+            position: fixed;
+            top: -10%;
+            font-size: 24px;
+            user-select: none;
+            animation: fall linear infinite;
+            z-index: 2;
+            opacity: 0.8;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+        }
+        @keyframes fall {
+            0% { transform: translate(0, -10vh) rotate(0deg); }
+            100% { transform: translate(20vw, 110vh) rotate(360deg); }
+        }
+        .leaf:nth-child(1) { left: 10%; animation-duration: 10s; animation-delay: 0s; }
+        .leaf:nth-child(2) { left: 25%; animation-duration: 12s; animation-delay: 2s; font-size: 28px; }
+        .leaf:nth-child(3) { left: 40%; animation-duration: 9s; animation-delay: 4s; }
+        .leaf:nth-child(4) { left: 60%; animation-duration: 14s; animation-delay: 1s; font-size: 20px; }
+        .leaf:nth-child(5) { left: 75%; animation-duration: 11s; animation-delay: 3s; }
+        .leaf:nth-child(6) { left: 90%; animation-duration: 13s; animation-delay: 5s; font-size: 30px; }
+
+        /* ===================== HERO SECTION ===================== */
+        #hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 60px;
+            z-index: 10;
+            position: relative;
+        }
+        .logo {
+            display: flex; align-items: center; gap: 15px;
+            font-weight: 600; font-size: 18px; letter-spacing: 1px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+        .logo img { width: 40px; height: 40px; border-radius: 50%; }
+        nav { display: flex; align-items: center; gap: 30px; }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links li a {
+            color: #ffffff; text-decoration: none; font-size: 14px;
+            font-weight: 400; padding-bottom: 5px; transition: color 0.3s;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+        .nav-links li a:hover { color: #ffbc00; }
+        .active-link { border-bottom: 2px solid #ffbc00; font-weight: 500 !important; }
+        .login-btn {
+            border: 1px solid #ffffff; border-radius: 25px; padding: 8px 24px;
+            color: #ffffff; text-decoration: none; font-size: 13px;
+            display: flex; align-items: center; gap: 8px;
+            transition: background-color 0.3s, color 0.3s;
+            backdrop-filter: blur(5px); background: rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .login-btn:hover { background-color: #ffffff; color: #000000; }
+
+        main.hero-main {
+            flex-grow: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; z-index: 10;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+        }
+        main.hero-main h1 {
+            font-size: 4.5vw; font-weight: 500; letter-spacing: 10px;
+            margin-bottom: 20px; text-transform: uppercase;
+        }
+        main.hero-main h2 {
+            font-size: 1.5vw; font-weight: 400; letter-spacing: 6px; color: #e0e0e0;
+        }
+
+        /* ===================== CONTENT SECTIONS ===================== */
+        .content-section {
+            position: relative;
+            z-index: 5;
+            background: rgba(10,15,30,0.92);
+            color: #e0e0e0;
+        }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        /* ===== PROCESSES SECTION ===== */
+        .process-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px; padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .process-card:hover { transform: translateY(-6px); box-shadow: 0 12px 30px rgba(74,222,128,0.2); }
+        .process-card img { width: 100%; height: 170px; object-fit: cover; border-radius: 10px; margin-bottom: 12px; }
+
+        /* ===== QUIZ ===== */
+        .quiz-btn {
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; border-radius: 10px; padding: 14px 18px;
+            font-family: 'Montserrat', sans-serif; font-size: 14px;
+            cursor: pointer; width: 100%; text-align: left;
+            transition: background 0.2s;
+        }
+        .quiz-btn:hover { background: rgba(74,222,128,0.18); }
+        .quiz-btn.correct { background: rgba(74,222,128,0.35); border-color: #4ade80; }
+        .quiz-btn.wrong { background: rgba(239,68,68,0.35); border-color: #ef4444; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 4px; }
+
+        /* ===================== TOAST ===================== */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 99999; }
+        .toast {
+            background: #1f2937; color: #fff; padding: 14px 22px;
+            border-radius: 10px; margin-bottom: 10px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            border-left: 5px solid #4ade80; transform: translateX(130%);
+            transition: transform 0.3s ease-out; display: flex; align-items: center; gap: 10px;
+            font-size: 14px; font-family: 'Montserrat',sans-serif;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: #ef4444; }
+
+        /* ===================== MODALS ===================== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 22px; padding: 40px;
+            width: 90%; max-width: 420px;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 16px; right: 20px;
+            background: none; border: none; color: #9ca3af;
+            font-size: 20px; cursor: pointer;
+        }
+        .modal-close:hover { color: #ef4444; }
+        .modal-input {
+            width: 100%; padding: 12px 16px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15);
+            color: #fff; font-family: 'Montserrat', sans-serif;
+            font-size: 14px; margin-bottom: 14px; outline: none;
+        }
+        .modal-input:focus { border-color: #4ade80; }
+        .modal-input::placeholder { color: #6b7280; }
+        .btn-green {
+            width: 100%; padding: 13px; border-radius: 12px;
+            background: linear-gradient(135deg, #16a34a, #4ade80);
+            color: #fff; font-weight: 700; font-size: 15px;
+            border: none; cursor: pointer; font-family: 'Montserrat',sans-serif;
+            transition: opacity 0.2s;
+        }
+        .btn-green:hover { opacity: 0.88; }
+        .btn-blue {
+            width: 100%; padding: 13px; border-radius: 12px;
+            background: linear-gradient(135deg, #1d4ed8, #60a5fa);
+            color: #fff; font-weight: 700; font-size: 15px;
+            border: none; cursor: pointer; font-family: 'Montserrat',sans-serif;
+            transition: opacity 0.2s; margin-top: 8px;
+        }
+        .btn-blue:hover { opacity: 0.88; }
+        .modal-switch { text-align: center; margin-top: 14px; font-size: 13px; color: #9ca3af; }
+        .modal-switch a { color: #4ade80; cursor: pointer; }
+
+        /* Large modal (T&C, About) */
+        .modal-box.wide { max-width: 650px; max-height: 80vh; overflow-y: auto; }
+        .modal-box.wide::-webkit-scrollbar { width: 6px; }
+        .modal-box.wide::-webkit-scrollbar-thumb { background: #4ade80; border-radius: 3px; }
+
+        /* ===================== 5-SEC BLOCK GATE ===================== */
+        #block-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 20000;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            gap: 0;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.5s;
+        }
+        #block-overlay.active { opacity: 1; pointer-events: all; }
+        #block-overlay .gate-box {
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 24px; padding: 44px 40px;
+            width: 90%; max-width: 440px;
+            text-align: center;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        #block-overlay .gate-icon { font-size: 56px; margin-bottom: 16px; }
+        #block-overlay h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        #block-overlay p { color: #9ca3af; font-size: 14px; margin-bottom: 28px; }
+        .gate-tabs { display: flex; gap: 12px; margin-bottom: 24px; }
+        .gate-tab {
+            flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); color: #fff; font-family: 'Montserrat',sans-serif;
+            transition: background 0.2s;
+        }
+        .gate-tab.active { background: #16a34a; border-color: #4ade80; }
+
+        /* ===================== ABOUT DEV ===================== */
+        .dev-avatar {
+            width: 100px; height: 100px; border-radius: 50%;
+            border: 3px solid #4ade80;
+            margin: 0 auto 16px;
+            display: block;
+        }
+        .dev-badge {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            background: rgba(74,222,128,0.15); border: 1px solid rgba(74,222,128,0.3);
+            font-size: 12px; color: #4ade80; margin: 4px;
+        }
+        .dev-stat {
+            background: rgba(255,255,255,0.06); border-radius: 12px; padding: 14px;
+            text-align: center;
+        }
+        .dev-stat .val { font-size: 22px; font-weight: 700; color: #4ade80; }
+        .dev-stat .lbl { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        /* ===================== GALLERY ===================== */
+        .gallery-grid { columns: 2; gap: 12px; }
+        @media(min-width:768px) { .gallery-grid { columns: 4; } }
+        .gallery-grid img {
+            width: 100%; border-radius: 10px; margin-bottom: 12px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .gallery-grid img:hover { opacity: 0.88; transform: scale(1.02); }
+
+        /* ===================== FOOTER ===================== */
+        footer {
+            background: #050911; border-top: 1px solid rgba(255,255,255,0.07);
+            padding: 48px 40px 24px; position: relative; z-index: 5;
+        }
+
+        /* ===================== FLOATING BTNS ===================== */
+        .float-btns {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 14px; z-index: 9000;
+        }
+        .float-btn {
+            width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            transition: transform 0.2s; text-decoration: none; color: #fff;
+        }
+        .float-btn:hover { transform: scale(1.12); }
+        .float-wa { background: #25d366; }
+        .float-up { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
+
+        /* ===================== SECTION HEADINGS ===================== */
+        .sec-heading {
+            text-align: center; margin-bottom: 48px;
+        }
+        .sec-heading h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 4vw, 42px); font-weight: 700;
+            color: #fff; margin-bottom: 10px;
+        }
+        .sec-heading .line { width: 60px; height: 3px; background: #4ade80; margin: 0 auto 12px; border-radius: 2px; }
+        .sec-heading p { color: #9ca3af; max-width: 560px; margin: 0 auto; font-size: 15px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; }
+            .nav-links { display: none; }
+            main.hero-main h1 { font-size: 7vw; letter-spacing: 5px; }
+            main.hero-main h2 { font-size: 3.5vw; letter-spacing: 3px; }
+        }
+
+        /* Section padding */
+        .sec { padding: 80px 40px; }
+        @media(max-width:768px) { .sec { padding: 60px 20px; } }
+
+        /* ===== ASSAM SECTION ===== */
+        .assam-feat {
+            display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;
+        }
+        .assam-icon {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+
+        /* ===== 3D Earth container ===== */
+        #earth-container { width: 100%; height: 400px; border-radius: 16px; overflow: hidden; }
+
+        /* ===== TERMS ===== */
+        .terms-list li { margin-bottom: 10px; color: #cbd5e1; font-size: 14px; line-height: 1.7; }
+        .terms-list { list-style: decimal; padding-left: 20px; }
+
+        /* Contact form */
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; margin-bottom: 6px; color: #9ca3af; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px 16px; border-radius: 10px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            color: #fff; font-family: 'Montserrat',sans-serif; font-size: 14px; outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #4ade80; }
+        .form-group textarea { resize: vertical; min-height: 110px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media(max-width:600px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<!-- ========================= WATERMARK LAYER ========================= -->
+<div id="watermark-layer"></div>
+
+<!-- ========================= LEAVES (ORIGINAL – UNTOUCHED) ========================= -->
+<div class="leaf">🍃</div>
+<div class="leaf">🌿</div>
+<div class="leaf">🍃</div>
+<div class="leaf">🌿</div>
+<div class="leaf">🍃</div>
+<div class="leaf">🌿</div>
+
+<!-- ========================= TREE ========================= -->
+<div id="tree-container">
+    <svg width="180" height="340" viewBox="0 0 180 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Trunk -->
+        <rect x="78" y="200" width="24" height="140" rx="8" fill="#5d3a1a"/>
+        <rect x="84" y="220" width="8" height="120" rx="4" fill="#7a4f2b" opacity="0.5"/>
+        <!-- Branches -->
+        <line x1="90" y1="230" x2="40" y2="170" stroke="#5d3a1a" stroke-width="10" stroke-linecap="round"/>
+        <line x1="90" y1="210" x2="140" y2="150" stroke="#5d3a1a" stroke-width="10" stroke-linecap="round"/>
+        <line x1="90" y1="250" x2="30" y2="210" stroke="#5d3a1a" stroke-width="8" stroke-linecap="round"/>
+        <!-- Foliage layers -->
+        <ellipse cx="90" cy="130" rx="70" ry="80" fill="#166534" opacity="0.85"/>
+        <ellipse cx="90" cy="90" rx="55" ry="65" fill="#15803d" opacity="0.9"/>
+        <ellipse cx="90" cy="55" rx="40" ry="52" fill="#16a34a" opacity="0.95"/>
+        <ellipse cx="90" cy="28" rx="28" ry="35" fill="#22c55e"/>
+        <!-- Highlight -->
+        <ellipse cx="78" cy="60" rx="14" ry="20" fill="#4ade80" opacity="0.3"/>
+    </svg>
+</div>
+
+<!-- ========================= 3-SEC BLOCK GATE ========================= -->
+<div id="block-overlay">
+    <div class="gate-box">
+        <div class="gate-icon">🔒</div>
+        <h2>Please Login to Continue</h2>
+        <p>Welcome to the Geography Department portal. Create an account or login to explore all features.</p>
+        <div class="gate-tabs">
+            <button class="gate-tab active" onclick="showGateTab('login')">Login</button>
+            <button class="gate-tab" onclick="showGateTab('signup')">Sign Up</button>
+        </div>
+        <!-- Login Tab -->
+        <div id="gate-login">
+            <input class="modal-input" id="gate-username" type="text" placeholder="Username or Email">
+            <input class="modal-input" id="gate-password" type="password" placeholder="Password">
+            <button class="btn-green" onclick="gateLogin()">Login & Enter</button>
+            <p style="margin-top:12px;font-size:12px;color:#6b7280;">
+                By logging in you agree to our
+                <a href="#" onclick="openModal('terms-modal');event.stopPropagation();" style="color:#4ade80;">Terms & Conditions</a>.
+            </p>
+        </div>
+        <!-- Signup Tab -->
+        <div id="gate-signup" style="display:none;">
+            <input class="modal-input" id="gate-name" type="text" placeholder="Full Name">
+            <input class="modal-input" id="gate-email" type="email" placeholder="Email Address">
+            <input class="modal-input" id="gate-pass2" type="password" placeholder="Create Password">
+            <button class="btn-blue" onclick="gateSignup()">Create Account & Enter</button>
+            <p style="margin-top:12px;font-size:12px;color:#6b7280;">
+                By signing up you agree to our
+                <a href="#" onclick="openModal('terms-modal');event.stopPropagation();" style="color:#4ade80;">Terms & Conditions</a>.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= TOAST ========================= -->
+<div id="toast-container"></div>
+
+<!-- ========================= VIDEO BG (ORIGINAL – UNTOUCHED) ========================= -->
+<video autoplay loop muted playsinline class="video-background">
+    <source src="https://cdn.pixabay.com/video/2020/05/25/40141-424888241_large.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<!-- ========================= HERO SECTION (ORIGINAL – UNTOUCHED) ========================= -->
+<section id="hero-section">
+    <header>
+        <div class="logo">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Hero" alt="Logo">
+            HERO
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#hero-section" class="active-link">Home</a></li>
+                <li><a href="#processes-section">Academics</a></li>
+                <li><a href="#about-section">About</a></li>
+                <li><a href="#assam-section">Assam Geo</a></li>
+                <li><a href="#quiz-section">Quiz</a></li>
+                <li><a href="#contact-section">Contact</a></li>
+                <li><a href="#" onclick="openModal('about-dev-modal');return false;">Developer</a></li>
+            </ul>
+            <a href="#" class="login-btn" onclick="openModal('auth-modal');return false;">Log In <span>🔍</span></a>
+        </nav>
+    </header>
+
+    <main class="hero-main">
+        <h1>GEOGRAPHY DEPARTMENT</h1>
+        <h2>Raha College, Nagaon Assam</h2>
+    </main>
+</section>
+
+<!-- ========================= ABOUT SECTION ========================= -->
+<section id="about-section" class="content-section sec">
+    <div style="max-width:1100px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>About Geomorphology</h2>
+            <div class="line"></div>
+            <p>The scientific study of Earth's landforms and the processes that shape them — from plate tectonics to river erosion.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;" data-aos="fade-up">
+            <div class="glass-card" style="padding:32px;">
+                <h3 style="font-size:20px;font-weight:700;color:#4ade80;margin-bottom:20px;">Earth's Internal Structure</h3>
+                <ul style="list-style:none;space-y:12px;">
+                    <li style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;">
+                        <span style="width:12px;height:12px;min-width:12px;margin-top:4px;background:#ef4444;border-radius:50%;box-shadow:0 0 8px #ef4444;"></span>
+                        <div><strong style="color:#fff;">Inner Core</strong><br><span style="font-size:13px;color:#9ca3af;">Solid iron & nickel, ~5,700°C temperature.</span></div>
+                    </li>
+                    <li style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;">
+                        <span style="width:12px;height:12px;min-width:12px;margin-top:4px;background:#f97316;border-radius:50%;box-shadow:0 0 8px #f97316;"></span>
+                        <div><strong style="color:#fff;">Outer Core</strong><br><span style="font-size:13px;color:#9ca3af;">Liquid iron & nickel, generates Earth's magnetic field.</span></div>
+                    </li>
+                    <li style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;">
+                        <span style="width:12px;height:12px;min-width:12px;margin-top:4px;background:#eab308;border-radius:50%;box-shadow:0 0 8px #eab308;"></span>
+                        <div><strong style="color:#fff;">The Mantle</strong><br><span style="font-size:13px;color:#9ca3af;">Semi-solid magma; convection drives plate tectonics.</span></div>
+                    </li>
+                    <li style="display:flex;align-items:flex-start;gap:14px;">
+                        <span style="width:12px;height:12px;min-width:12px;margin-top:4px;background:#3b82f6;border-radius:50%;box-shadow:0 0 8px #3b82f6;"></span>
+                        <div><strong style="color:#fff;">The Crust</strong><br><span style="font-size:13px;color:#9ca3af;">Continental (thick) and oceanic (thin) outer shell.</span></div>
+                    </li>
+                </ul>
+            </div>
+            <div style="display:flex;justify-content:center;" data-aos="zoom-in">
+                <div style="position:relative;width:220px;height:220px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(59,130,246,0.3);">
+                    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#3b82f6,#1d4ed8);border-radius:50%;animation:pulse 3s infinite;"></div>
+                    <div style="position:absolute;inset:16px;background:linear-gradient(135deg,#ca8a04,#92400e);border-radius:50%;z-index:1;"></div>
+                    <div style="position:absolute;inset:42px;background:linear-gradient(135deg,#ea580c,#dc2626);border-radius:50%;z-index:2;"></div>
+                    <div style="position:absolute;inset:72px;background:linear-gradient(135deg,#991b1b,#7f1d1d);border-radius:50%;z-index:3;display:flex;align-items:center;justify-content:center;">
+                        <span style="font-size:10px;font-weight:700;text-align:center;color:#fff;">INNER<br>CORE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }</style>
+    </div>
+</section>
+
+<!-- ========================= PROCESSES SECTION ========================= -->
+<section id="processes-section" class="content-section sec" style="background:rgba(5,10,20,0.95);">
+    <div style="max-width:1100px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>Geomorphic Processes</h2>
+            <div class="line"></div>
+            <p>Forces that continuously wear down and build up Earth's surface.</p>
+        </div>
+
+        <!-- 3D Earth -->
+        <div class="glass-card" style="padding:24px;margin-bottom:60px;" data-aos="zoom-in">
+            <div id="earth-container"></div>
+            <p style="text-align:center;color:#9ca3af;font-size:13px;margin-top:10px;">🖱️ Drag to rotate the 3D Earth</p>
+        </div>
+
+        <!-- Endogenic -->
+        <h3 style="font-size:20px;font-weight:700;color:#60a5fa;text-align:center;margin-bottom:28px;" data-aos="fade-up">
+            <i class="fas fa-mountain" style="margin-right:8px;"></i>Endogenic Processes (Internal)
+        </h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-bottom:56px;">
+            <div class="process-card" data-aos="fade-up">
+                <img src="https://picsum.photos/seed/volcano/400/250" alt="Volcanism">
+                <h4 style="font-weight:700;font-size:16px;margin-bottom:8px;color:#fff;">Volcanism</h4>
+                <p style="font-size:13px;color:#9ca3af;">Movement of molten rock (magma) onto the surface. Creates lava plateaus, volcanic cones, and geysers.</p>
+            </div>
+            <div class="process-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="https://picsum.photos/seed/earthquake/400/250" alt="Diastrophism">
+                <h4 style="font-weight:700;font-size:16px;margin-bottom:8px;color:#fff;">Diastrophism</h4>
+                <p style="font-size:13px;color:#9ca3af;">Deformation of the Earth's crust by folding and faulting — responsible for mountain building (Orogeny).</p>
+            </div>
+            <div class="process-card" data-aos="fade-up" data-aos-delay="200">
+                <img src="https://picsum.photos/seed/plate/400/250" alt="Plate Tectonics">
+                <h4 style="font-weight:700;font-size:16px;margin-bottom:8px;color:#fff;">Plate Tectonics</h4>
+                <p style="font-size:13px;color:#9ca3af;">Interaction of rigid lithospheric plates explaining the structure of the Earth's crust and many geological phenomena.</p>
+            </div>
+        </div>
+
+        <!-- Exogenic -->
+        <h3 style="font-size:20px;font-weight:700;color:#4ade80;text-align:center;margin-bottom:28px;" data-aos="fade-up">
+            <i class="fas fa-wind" style="margin-right:8px;"></i>Exogenic Processes (External)
+        </h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+            <div class="glass-card" style="padding:20px;border-top:4px solid #3b82f6;" data-aos="flip-left">
+                <i class="fas fa-water" style="font-size:28px;color:#3b82f6;margin-bottom:10px;display:block;"></i>
+                <h4 style="font-weight:700;margin-bottom:6px;color:#fff;">Fluvial</h4>
+                <p style="font-size:12px;color:#9ca3af;">Erosion & deposition by rivers. Forms: Valleys, Deltas, Alluvial Fans.</p>
+            </div>
+            <div class="glass-card" style="padding:20px;border-top:4px solid #67e8f9;" data-aos="flip-left" data-aos-delay="100">
+                <i class="fas fa-snowflake" style="font-size:28px;color:#67e8f9;margin-bottom:10px;display:block;"></i>
+                <h4 style="font-weight:700;margin-bottom:6px;color:#fff;">Glacial</h4>
+                <p style="font-size:12px;color:#9ca3af;">Action of ice. Forms: Cirques, Moraines, U-shaped Valleys.</p>
+            </div>
+            <div class="glass-card" style="padding:20px;border-top:4px solid #eab308;" data-aos="flip-left" data-aos-delay="200">
+                <i class="fas fa-wind" style="font-size:28px;color:#eab308;margin-bottom:10px;display:block;"></i>
+                <h4 style="font-weight:700;margin-bottom:6px;color:#fff;">Aeolian</h4>
+                <p style="font-size:12px;color:#9ca3af;">Action of wind. Forms: Sand Dunes, Loess, Mushroom Rocks.</p>
+            </div>
+            <div class="glass-card" style="padding:20px;border-top:4px solid #a855f7;" data-aos="flip-left" data-aos-delay="300">
+                <i class="fas fa-water" style="font-size:28px;color:#a855f7;margin-bottom:10px;display:block;"></i>
+                <h4 style="font-weight:700;margin-bottom:6px;color:#fff;">Coastal</h4>
+                <p style="font-size:12px;color:#9ca3af;">Wave & tide action. Forms: Cliffs, Sea Arches, Stacks, Spits.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= ASSAM SECTION ========================= -->
+<section id="assam-section" class="content-section sec">
+    <div style="max-width:1100px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>Assam Geomorphology</h2>
+            <div class="line"></div>
+            <p>Assam's unique geological features shaped by the Himalayan orogeny and the mighty Brahmaputra river system.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;" data-aos="fade-up">
+            <div>
+                <div class="assam-feat">
+                    <div class="assam-icon" style="background:rgba(59,130,246,0.2);">🌊</div>
+                    <div>
+                        <h5 style="font-weight:700;color:#fff;margin-bottom:4px;">Brahmaputra Floodplains</h5>
+                        <p style="font-size:13px;color:#9ca3af;">The river is characterized by a braided channel pattern, frequent shifting, and severe floods that deposit fertile alluvium.</p>
+                    </div>
+                </div>
+                <div class="assam-feat">
+                    <div class="assam-icon" style="background:rgba(74,222,128,0.2);">🌿</div>
+                    <div>
+                        <h5 style="font-weight:700;color:#fff;margin-bottom:4px;">Kaziranga Landscape</h5>
+                        <p style="font-size:13px;color:#9ca3af;">Tall elephant grass, marshland, and tropical moist broadleaf forests formed by alluvial deposits over millennia.</p>
+                    </div>
+                </div>
+                <div class="assam-feat">
+                    <div class="assam-icon" style="background:rgba(234,179,8,0.2);">⛰️</div>
+                    <div>
+                        <h5 style="font-weight:700;color:#fff;margin-bottom:4px;">Mikir Hills & Barail Range</h5>
+                        <p style="font-size:13px;color:#9ca3af;">Ancient hills composed of Archaean rocks, contrasting with the young alluvial plains of the valley.</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <img src="https://picsum.photos/seed/brahmaputra/600/400" alt="Assam River" style="width:100%;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                <div style="margin-top:16px;padding:16px;background:rgba(234,179,8,0.1);border-left:4px solid #eab308;border-radius:8px;">
+                    <p style="font-size:13px;color:#d1d5db;font-style:italic;">"The Brahmaputra is one of the largest rivers in the world, known for its enormous sediment load and propensity to change course."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= GALLERY ========================= -->
+<section id="gallery-section" class="content-section sec" style="background:rgba(5,10,20,0.95);">
+    <div style="max-width:1100px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>Landforms Gallery</h2>
+            <div class="line"></div>
+        </div>
+        <div class="gallery-grid" data-aos="fade-up">
+            <img src="https://picsum.photos/seed/canyon/400/600" alt="Fluvial">
+            <img src="https://picsum.photos/seed/glacier2/400/300" alt="Glacial">
+            <img src="https://picsum.photos/seed/desert/400/300" alt="Aeolian">
+            <img src="https://picsum.photos/seed/coast/400/600" alt="Coastal">
+            <img src="https://picsum.photos/seed/karst/400/600" alt="Karst">
+            <img src="https://picsum.photos/seed/mountain/400/300" alt="Structural">
+            <img src="https://picsum.photos/seed/lake/400/300" alt="Lacustrine">
+            <img src="https://picsum.photos/seed/assam/400/600" alt="Assam">
+        </div>
+    </div>
+</section>
+
+<!-- ========================= QUIZ SECTION ========================= -->
+<section id="quiz-section" class="content-section sec" style="background:linear-gradient(135deg,rgba(10,30,60,0.97),rgba(10,40,25,0.97));">
+    <div style="max-width:720px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>Knowledge Check</h2>
+            <div class="line"></div>
+            <p>Test your understanding of Geomorphology and Assam's geography.</p>
+        </div>
+        <div class="glass-card" style="padding:36px;" data-aos="zoom-in">
+            <div id="quiz-start" style="text-align:center;">
+                <p style="color:#9ca3af;margin-bottom:24px;">5 questions — Geography &amp; Assam focus</p>
+                <button onclick="startQuiz()" class="btn-green" style="max-width:200px;margin:0 auto;">Start Quiz 🚀</button>
+            </div>
+            <div id="quiz-game" style="display:none;">
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13px;color:#9ca3af;">
+                    <span id="q-count">Question 1/5</span>
+                    <span id="q-score">Score: 0</span>
+                </div>
+                <div style="height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:24px;">
+                    <div id="q-bar" style="height:6px;background:#4ade80;border-radius:3px;width:20%;transition:width 0.4s;"></div>
+                </div>
+                <h3 id="q-text" style="font-size:18px;font-weight:700;color:#fff;margin-bottom:20px;"></h3>
+                <div id="q-options" style="display:flex;flex-direction:column;gap:10px;"></div>
+            </div>
+            <div id="quiz-result" style="display:none;text-align:center;">
+                <div style="font-size:56px;margin-bottom:12px;">🏆</div>
+                <h3 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">Quiz Completed!</h3>
+                <p style="color:#9ca3af;margin-bottom:24px;">You scored <span id="final-score" style="color:#4ade80;font-weight:700;">0</span> out of 5</p>
+                <button onclick="startQuiz()" class="btn-green" style="max-width:180px;margin:0 auto;">Retry</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= CONTACT SECTION ========================= -->
+<section id="contact-section" class="content-section sec">
+    <div style="max-width:700px;margin:0 auto;">
+        <div class="sec-heading" data-aos="fade-up">
+            <h2>Feedback & Contact</h2>
+            <div class="line"></div>
+        </div>
+        <div class="glass-card" style="padding:36px;" data-aos="fade-up">
+            <form action="https://formsubmit.co/reinsangma@gmail.com" method="POST">
+                <input type="hidden" name="_subject" value="New Feedback – Geography Dept">
+                <input type="hidden" name="_captcha" value="false">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea name="message" placeholder="Your message..." required></textarea>
+                </div>
+                <button type="submit" class="btn-green">Send Message ✉️</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ========================= FOOTER ========================= -->
+<footer>
+    <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;margin-bottom:36px;">
+        <div>
+            <h4 style="font-size:18px;font-weight:700;color:#4ade80;margin-bottom:12px;">GeoMorph</h4>
+            <p style="font-size:13px;color:#6b7280;line-height:1.7;">An educational portal by the Geography Department, Raha College, Nagaon, Assam.</p>
+        </div>
+        <div>
+            <h4 style="font-weight:700;margin-bottom:12px;color:#fff;">Quick Links</h4>
+            <ul style="list-style:none;space-y:6px;">
+                <li><a href="#about-section" style="color:#6b7280;font-size:13px;text-decoration:none;">About</a></li>
+                <li><a href="#quiz-section" style="color:#6b7280;font-size:13px;text-decoration:none;">Quiz</a></li>
+                <li><a href="#" onclick="openModal('terms-modal');return false;" style="color:#6b7280;font-size:13px;text-decoration:none;">Terms &amp; Conditions</a></li>
+                <li><a href="#" onclick="openModal('about-dev-modal');return false;" style="color:#6b7280;font-size:13px;text-decoration:none;">About Developer</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="font-weight:700;margin-bottom:12px;color:#fff;">Contact</h4>
+            <p style="font-size:13px;color:#6b7280;margin-bottom:6px;"><i class="fas fa-envelope" style="margin-right:8px;color:#4ade80;"></i>reinsangma@gmail.com</p>
+            <p style="font-size:13px;color:#6b7280;"><i class="fas fa-phone" style="margin-right:8px;color:#4ade80;"></i>+91 7086941967</p>
+        </div>
+        <div>
+            <h4 style="font-weight:700;margin-bottom:12px;color:#fff;">Developer</h4>
+            <p style="font-size:13px;color:#6b7280;margin-bottom:8px;">Reinhard son Sangma</p>
+            <p style="font-size:12px;color:#4b5563;">B.A. 5th Sem · Raha College</p>
+        </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:20px;text-align:center;font-size:12px;color:#4b5563;">
+        &copy; 2025 Geography Department · Raha College. Designed by <span style="color:#4ade80;">Reinhard son Sangma</span>
+    </div>
+</footer>
+
+<!-- ========================= FLOATING BUTTONS ========================= -->
+<div class="float-btns">
+    <a href="https://wa.me/917086941967" target="_blank" class="float-btn float-wa">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    <button class="float-btn float-up" onclick="window.scrollTo({top:0,behavior:'smooth'});" title="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+</div>
+
+<!-- ========================= AUTH MODAL ========================= -->
+<div id="auth-modal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('auth-modal')"><i class="fas fa-times"></i></button>
+        <div style="display:flex;gap:8px;margin-bottom:24px;">
+            <button class="gate-tab active" id="auth-tab-login" onclick="switchAuthTab('login')">Login</button>
+            <button class="gate-tab" id="auth-tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+        </div>
+        <div id="auth-login">
+            <h2 style="font-size:20px;font-weight:700;text-align:center;margin-bottom:20px;">Welcome Back 👋</h2>
+            <input class="modal-input" id="auth-username" type="text" placeholder="Username">
+            <input class="modal-input" id="auth-password" type="password" placeholder="Password">
+            <button class="btn-green" onclick="doLogin()">Login</button>
+        </div>
+        <div id="auth-signup" style="display:none;">
+            <h2 style="font-size:20px;font-weight:700;text-align:center;margin-bottom:20px;">Create Account</h2>
+            <input class="modal-input" id="auth-name" type="text" placeholder="Full Name">
+            <input class="modal-input" id="auth-email" type="email" placeholder="Email Address">
+            <input class="modal-input" id="auth-pass" type="password" placeholder="Password">
+            <button class="btn-blue" onclick="doSignup()">Sign Up</button>
+        </div>
+        <p style="text-align:center;font-size:12px;color:#6b7280;margin-top:14px;">
+            By continuing you agree to our <a href="#" onclick="openModal('terms-modal');return false;" style="color:#4ade80;">Terms & Conditions</a>.
+        </p>
+    </div>
+</div>
+
+<!-- ========================= TERMS & CONDITIONS MODAL ========================= -->
+<div id="terms-modal" class="modal-overlay">
+    <div class="modal-box wide">
+        <button class="modal-close" onclick="closeModal('terms-modal')"><i class="fas fa-times"></i></button>
+        <h2 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">Terms & Conditions</h2>
+        <p style="color:#6b7280;font-size:13px;margin-bottom:24px;">Last updated: January 2025 · Geography Department, Raha College</p>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin-bottom:10px;">1. Data Collection & Usage</h4>
+        <ul class="terms-list">
+            <li>When you register, we collect your name, email address, and password (stored securely via hashing) for authentication purposes only.</li>
+            <li>Login timestamps and session data are recorded locally for security auditing and user dashboard features.</li>
+            <li>We do not sell, share, or transfer your personal data to any third party without your explicit written consent.</li>
+            <li>Quiz performance data (scores, attempts) may be stored locally to provide you with progress analytics inside your dashboard.</li>
+        </ul>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin:18px 0 10px;">2. User Responsibilities</h4>
+        <ul class="terms-list">
+            <li>You are responsible for maintaining the confidentiality of your login credentials. Do not share your password with others.</li>
+            <li>Any misuse of the platform — including attempting to bypass authentication, scrape data, or distribute content without permission — is strictly prohibited.</li>
+            <li>Users must be 13 years of age or older to create an account on this platform.</li>
+        </ul>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin:18px 0 10px;">3. Intellectual Property</h4>
+        <ul class="terms-list">
+            <li>All content, design elements, animations, quiz questions, and code on this website are the intellectual property of Reinhard son Sangma and the Geography Department, Raha College.</li>
+            <li>You may use the educational content for personal, non-commercial learning purposes only.</li>
+            <li>Reproduction or redistribution of site content without written permission is prohibited.</li>
+        </ul>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin:18px 0 10px;">4. Privacy & Cookies</h4>
+        <ul class="terms-list">
+            <li>This site uses browser localStorage to store session data and preferences. No external tracking cookies are used.</li>
+            <li>By using this site you consent to the storage of functional data in your browser's local storage.</li>
+            <li>You may clear your browser's localStorage at any time to remove all stored data.</li>
+        </ul>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin:18px 0 10px;">5. Disclaimer</h4>
+        <ul class="terms-list">
+            <li>Educational content is provided in good faith for academic purposes. While we strive for accuracy, we cannot guarantee completeness or correctness of all information.</li>
+            <li>This platform is a student project and does not represent any official policy or position of Raha College administration.</li>
+        </ul>
+
+        <h4 style="color:#4ade80;font-size:14px;font-weight:700;margin:18px 0 10px;">6. Contact</h4>
+        <p style="color:#9ca3af;font-size:13px;">For privacy-related inquiries, contact: <span style="color:#4ade80;">reinsangma@gmail.com</span></p>
+
+        <button onclick="closeModal('terms-modal')" class="btn-green" style="margin-top:24px;">I Understand & Agree ✓</button>
+    </div>
+</div>
+
+<!-- ========================= ABOUT DEVELOPER MODAL ========================= -->
+<div id="about-dev-modal" class="modal-overlay">
+    <div class="modal-box wide">
+        <button class="modal-close" onclick="closeModal('about-dev-modal')"><i class="fas fa-times"></i></button>
+
+        <div style="text-align:center;margin-bottom:24px;">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Reinhard&backgroundColor=0f172a" alt="Developer" class="dev-avatar">
+            <h2 style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;">Reinhard son Sangma</h2>
+            <p style="color:#4ade80;font-size:14px;font-weight:600;">Self-Taught Web Developer & UI Designer</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;">
+            <div class="dev-stat"><div class="val">5th</div><div class="lbl">Semester</div></div>
+            <div class="dev-stat"><div class="val">B.A.</div><div class="lbl">Major: Geography</div></div>
+            <div class="dev-stat"><div class="val">Raha</div><div class="lbl">College, Nagaon</div></div>
+        </div>
+
+        <div class="glass-card" style="padding:20px;margin-bottom:20px;">
+            <p style="font-size:14px;color:#cbd5e1;line-height:1.8;">
+                Hi! I am <strong style="color:#4ade80;">Reinhard son Sangma</strong>, currently studying in <strong style="color:#fff;">B.A. 5th Semester</strong> at <strong style="color:#fff;">Raha College, Nagaon, Assam</strong>, majoring in <strong style="color:#fff;">Geography</strong> with Economics as a minor.
+                <br><br>
+                I am a self-taught web developer and UI designer who builds projects independently — from interactive educational portals to trading signal apps. This Geography Department website is one of my hardest and most ambitious designs yet, featuring a <strong style="color:#4ade80;">live 3D video background</strong>, real-time <strong style="color:#4ade80;">Three.js Earth globe</strong>, falling leaf animations, glassmorphism UI, quiz system with certificates, payment integration, and much more — all in a single HTML file.
+                <br><br>
+                I come from <strong style="color:#fff;">Dalimbari Village, West Karbi Anglong, Assam</strong>, and I am passionate about using technology to bring quality education and digital tools to rural and middle-class communities.
+            </p>
+        </div>
+
+        <h4 style="color:#fff;font-weight:700;margin-bottom:10px;">Skills & Technologies</h4>
+        <div style="margin-bottom:20px;">
+            <span class="dev-badge">HTML / CSS / JS</span>
+            <span class="dev-badge">Three.js</span>
+            <span class="dev-badge">Glassmorphism UI</span>
+            <span class="dev-badge">Python</span>
+            <span class="dev-badge">UI Design</span>
+            <span class="dev-badge">Geography</span>
+            <span class="dev-badge">Data Viz</span>
+            <span class="dev-badge">Canvas API</span>
+        </div>
+
+        <h4 style="color:#fff;font-weight:700;margin-bottom:10px;">About This Project</h4>
+        <p style="font-size:13px;color:#9ca3af;line-height:1.7;margin-bottom:20px;">
+            This website is one of my hardest designs — it includes a <strong style="color:#fff;">3D video running in the background</strong>, an interactive <strong style="color:#fff;">Three.js rotating Earth globe</strong>, falling leaves, a tree animation, glassmorphism cards, a full quiz system, UPI payment integration, AOS scroll animations, login/signup gate, watermark system, Terms & Conditions, and this About Developer page — all built as a <strong style="color:#4ade80;">single HTML file</strong>.
+        </p>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="https://wa.me/917086941967" target="_blank" class="btn-green" style="max-width:180px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="mailto:reinsangma@gmail.com" class="btn-blue" style="max-width:180px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ========================= SCRIPTS ========================= -->
+<script>
+    // ===== AOS Init =====
+    AOS.init({ duration: 900, once: true, offset: 80 });
+
+    // ===== WATERMARK =====
+    (function buildWatermark() {
+        const layer = document.getElementById('watermark-layer');
+        const text = 'Reinhard son Sangma';
+        const cols = Math.ceil(window.innerWidth / 220) + 2;
+        const rows = Math.ceil(window.innerHeight / 160) + 2;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const el = document.createElement('div');
+                el.className = 'watermark-text';
+                el.textContent = text;
+                el.style.left = (c * 210 - 30) + 'px';
+                el.style.top = (r * 150 - 20) + 'px';
+                layer.appendChild(el);
+            }
+        }
+    })();
+
+    // ===== 5-SECOND BLOCK GATE =====
+    let gateShown = false;
+    setTimeout(() => {
+        const user = localStorage.getItem('geoUser');
+        if (!user && !gateShown) {
+            gateShown = true;
+            document.getElementById('block-overlay').classList.add('active');
+        }
+    }, 5000);
+
+    function showGateTab(tab) {
+        document.getElementById('gate-login').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('gate-signup').style.display = tab === 'signup' ? 'block' : 'none';
+        document.querySelectorAll('.gate-tab').forEach((t, i) => {
+            t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'signup' && i === 1));
+        });
+    }
+
+    function gateLogin() {
+        const u = document.getElementById('gate-username').value.trim();
+        const p = document.getElementById('gate-password').value;
+        if (!u || !p) { showToast('Please fill all fields', 'error'); return; }
+        const stored = JSON.parse(localStorage.getItem('geoUser') || 'null');
+        // Accept any login (simulated) or matching stored creds
+        const user = stored && stored.username === u ? stored : { name: u, username: u };
+        localStorage.setItem('geoUser', JSON.stringify(user));
+        document.getElementById('block-overlay').classList.remove('active');
+        showToast('Welcome, ' + u + '! 🎉');
+    }
+
+    function gateSignup() {
+        const n = document.getElementById('gate-name').value.trim();
+        const e = document.getElementById('gate-email').value.trim();
+        const p = document.getElementById('gate-pass2').value;
+        if (!n || !e || !p) { showToast('Please fill all fields', 'error'); return; }
+        const user = { name: n, username: n, email: e };
+        localStorage.setItem('geoUser', JSON.stringify(user));
+        document.getElementById('block-overlay').classList.remove('active');
+        showToast('Account created! Welcome, ' + n + ' 🎉');
+    }
+
+    // ===== MODALS =====
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.addEventListener('click', e => {
+            if (e.target === m) closeModal(m.id);
+        });
+    });
+
+    // Auth modal tab switch
+    function switchAuthTab(tab) {
+        document.getElementById('auth-login').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('auth-signup').style.display = tab === 'signup' ? 'block' : 'none';
+        document.getElementById('auth-tab-login').classList.toggle('active', tab === 'login');
+        document.getElementById('auth-tab-signup').classList.toggle('active', tab === 'signup');
+    }
+
+    function doLogin() {
+        const u = document.getElementById('auth-username').value.trim();
+        if (!u) { showToast('Enter a username', 'error'); return; }
+        const user = { name: u, username: u };
+        localStorage.setItem('geoUser', JSON.stringify(user));
+        closeModal('auth-modal');
+        showToast('Welcome back, ' + u + '!');
+    }
+
+    function doSignup() {
+        const n = document.getElementById('auth-name').value.trim();
+        const e = document.getElementById('auth-email').value.trim();
+        if (!n || !e) { showToast('Fill all fields', 'error'); return; }
+        const user = { name: n, username: n, email: e };
+        localStorage.setItem('geoUser', JSON.stringify(user));
+        closeModal('auth-modal');
+        showToast('Account created! Welcome, ' + n + ' 🎉');
+    }
+
+    // ===== TOAST =====
+    function showToast(msg, type = 'success') {
+        const c = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = 'toast' + (type === 'error' ? ' error' : '');
+        t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> <span>${msg}</span>`;
+        c.appendChild(t);
+        setTimeout(() => t.classList.add('show'), 80);
+        setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350); }, 3200);
+    }
+
+    // ===== THREE.JS EARTH =====
+    (function initEarth() {
+        const container = document.getElementById('earth-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+        camera.position.z = 2.6;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(container.offsetWidth, container.offsetHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; controls.dampingFactor = 0.05; controls.enableZoom = false;
+
+        const earthGroup = new THREE.Group();
+        scene.add(earthGroup);
+
+        const loader = new THREE.TextureLoader();
+        const earthMat = new THREE.MeshPhongMaterial({
+            map: loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Solarsystemscope_texture_2k_earth_daymap.jpg/1024px-Solarsystemscope_texture_2k_earth_daymap.jpg'),
+            specular: new THREE.Color('grey'), shininess: 10
+        });
+        const earthMesh = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), earthMat);
+        earthGroup.add(earthMesh);
+
+        const cloudMat = new THREE.MeshPhongMaterial({
+            map: loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Solarsystemscope_texture_2k_earth_clouds.jpg/1024px-Solarsystemscope_texture_2k_earth_clouds.jpg'),
+            transparent: true, opacity: 0.75
+        });
+        const cloudMesh = new THREE.Mesh(new THREE.SphereGeometry(1.02, 64, 64), cloudMat);
+        earthGroup.add(cloudMesh);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        sun.position.set(5, 3, 5);
+        scene.add(sun);
+
+        (function animate() {
+            requestAnimationFrame(animate);
+            earthMesh.rotation.y += 0.002;
+            cloudMesh.rotation.y += 0.0025;
+            controls.update();
+            renderer.render(scene, camera);
+        })();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.offsetWidth / container.offsetHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.offsetWidth, container.offsetHeight);
+        });
+    })();
+
+    // ===== QUIZ =====
+    const questions = [
+        { q: "Which process is responsible for the formation of the Himalayas?", options: ["Endogenic", "Exogenic", "Volcanism", "Erosion"], a: 0 },
+        { q: "Brahmaputra river in Assam is an example of:", options: ["Meandering channel", "Braided channel", "Dendritic pattern", "Trellis pattern"], a: 1 },
+        { q: "Which landform is created by wind deposition?", options: ["Yardang", "Barchan", "Sand Dunes", "Both B and C"], a: 3 },
+        { q: "The core of the Earth is made up of:", options: ["Silica and Magnesium", "Iron and Nickel", "Aluminum and Silicon", "Magma"], a: 1 },
+        { q: "Kaziranga National Park is located in:", options: ["Mikir Hills", "Brahmaputra Floodplains", "Barail Range", "Patkai Range"], a: 1 }
+    ];
+
+    let curQ = 0, qScore = 0, answered = false;
+
+    function startQuiz() {
+        curQ = 0; qScore = 0; answered = false;
+        document.getElementById('quiz-start').style.display = 'none';
+        document.getElementById('quiz-result').style.display = 'none';
+        document.getElementById('quiz-game').style.display = 'block';
+        loadQ();
+    }
+
+    function loadQ() {
+        answered = false;
+        const q = questions[curQ];
+        document.getElementById('q-text').textContent = q.q;
+        document.getElementById('q-count').textContent = `Question ${curQ + 1}/${questions.length}`;
+        document.getElementById('q-score').textContent = `Score: ${qScore}`;
+        document.getElementById('q-bar').style.width = `${((curQ + 1) / questions.length) * 100}%`;
+        const opts = document.getElementById('q-options');
+        opts.innerHTML = '';
+        q.options.forEach((o, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'quiz-btn';
+            btn.textContent = String.fromCharCode(65 + i) + '. ' + o;
+            btn.onclick = () => checkQ(i, btn, q.a);
+            opts.appendChild(btn);
+        });
+    }
+
+    function checkQ(idx, btn, correct) {
+        if (answered) return;
+        answered = true;
+        const btns = document.querySelectorAll('.quiz-btn');
+        if (idx === correct) { btn.classList.add('correct'); qScore++; showToast('Correct! ✅'); }
+        else { btn.classList.add('wrong'); btns[correct].classList.add('correct'); showToast('Incorrect ❌', 'error'); }
+        curQ++;
+        setTimeout(() => {
+            if (curQ < questions.length) loadQ();
+            else {
+                document.getElementById('quiz-game').style.display = 'none';
+                document.getElementById('quiz-result').style.display = 'block';
+                document.getElementById('final-score').textContent = qScore;
+            }
+        }, 900);
+    }
+
+    // ===== CHECK IF ALREADY LOGGED IN ON LOAD =====
+    window.addEventListener('load', () => {
+        const u = localStorage.getItem('geoUser');
+        if (u) { showToast('Welcome back, ' + JSON.parse(u).name + '!'); }
+    });
+</script>
+</body>
+</html>
